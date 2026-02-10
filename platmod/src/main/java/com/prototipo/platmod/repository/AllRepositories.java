@@ -18,12 +18,6 @@ interface PlanSuscripcionRepository extends JpaRepository<PlanSuscripcion, Long>
     List<PlanSuscripcion> findByOrderByPrecioAsc();
 }
 
-// Estudiante Repository
-@Repository
-interface EstudianteRepository extends JpaRepository<Estudiante, Long> {
-    Optional<Estudiante> findByUsuario(Usuario usuario);
-}
-
 // Suscripcion Repository
 @Repository
 interface SuscripcionRepository extends JpaRepository<Suscripcion, Long> {
@@ -38,25 +32,11 @@ interface DocenteRepository extends JpaRepository<Docente, Long> {
     List<Docente> findByEstadoDocente(Boolean estadoDocente);
 }
 
-// Curso Repository
-@Repository
-interface CursoRepository extends JpaRepository<Curso, Long> {
-    List<Curso> findByAdministrador(Usuario administrador);
-    List<Curso> findByTituloContainingIgnoreCase(String titulo);
-}
-
 // AsignacionDocente Repository
 @Repository
 interface AsignacionDocenteRepository extends JpaRepository<AsignacionDocente, Long> {
     List<AsignacionDocente> findByCurso(Curso curso);
     List<AsignacionDocente> findByUsuario(Usuario usuario);
-}
-
-// Leccion Repository
-@Repository
-interface LeccionRepository extends JpaRepository<Leccion, Long> {
-    List<Leccion> findByCurso(Curso curso);
-    List<Leccion> findByDocente(Docente docente);
 }
 
 // Modulo Repository
