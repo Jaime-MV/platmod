@@ -43,7 +43,15 @@ public class Usuario {
     private LocalDateTime fechaRegistro;
 
     @Column(nullable = false)
-    private Boolean estado = true;
+    private Boolean estado = true; // Esto es para bans o borrado lógico
+
+    // --- NUEVOS CAMPOS PARA VERIFICACION DE CORREO ---
+
+    @Column(name = "codigo_verificacion", length = 6)
+    private String codigoVerificacion;
+
+    @Column(name = "cuenta_verificada", nullable = false)
+    private boolean cuentaVerificada = false; // IMPORTANTE: Por defecto es falso
 
     @PrePersist
     protected void onCreate() {
@@ -55,4 +63,5 @@ public class Usuario {
         DOCENTE,
         ADMINISTRADOR
     }
+
 }

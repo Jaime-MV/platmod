@@ -1,12 +1,16 @@
 package com.prototipo.platmod.service.impl;
+
 import com.prototipo.platmod.entity.Usuario;
 import com.prototipo.platmod.repository.UsuarioRepository;
+import com.prototipo.platmod.service.EmailService; // IMPORTANTE: Importar tu servicio de email
 import com.prototipo.platmod.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.List;
+import java.util.Random; // IMPORTANTE: Para generar el codigo aleatorio
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +19,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService; // 1. INYECTAMOS EL SERVICIO DE EMAIL
 
     @Override
     @Transactional(readOnly = true)
@@ -51,11 +56,26 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario crear(Usuario usuario) {
         if (usuarioRepository.existsByCorreo(usuario.getCorreo())) {
-            throw new RuntimeException("El correo ya está registrado: " + usuario.getCorreo());
+            throw new RuntimeException("El correo ya esta registrado: " + usuario.getCorreo());
         }
-        // ENCRIPTAR LA CONTRASEÑA ANTES DE GUARDAR
+
+        // 2. ENCRIPTAR LA CONTRASENA
         usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
-        return usuarioRepository.save(usuario);
+
+        // 3. GENERAR CODIGO DE VERIFICACION (6 Digitos)
+        String codigo = String.valueOf(new Random().nextInt(900000) + 100000);
+        usuario.setCodigoVerificacion(codigo);
+
+        // 4. MARCAR COMO NO VERIFICADO
+        usuario.setCuentaVerificada(false);
+
+        // 5. GUARDAR EN BASE DE DATOS
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+        // 6. ENVIAR EL CORREO
+        emailService.enviarCodigoVerificacion(usuario.getCorreo(), codigo);
+
+        return usuarioGuardado;
     }
 
     @Override
@@ -65,14 +85,16 @@ public class UsuarioServiceImpl implements UsuarioService {
         // Verificar si el correo ya existe (excepto el del mismo usuario)
         if (!usuario.getCorreo().equals(usuarioActualizado.getCorreo())
                 && usuarioRepository.existsByCorreo(usuarioActualizado.getCorreo())) {
-            throw new RuntimeException("El correo ya está registrado: " + usuarioActualizado.getCorreo());
+            throw new RuntimeException("El correo ya esta registrado: " + usuarioActualizado.getCorreo());
         }
 
         usuario.setNombre(usuarioActualizado.getNombre());
         usuario.setCorreo(usuarioActualizado.getCorreo());
 
+        // OJO: Si actualizan contrasena, lo ideal es encriptarla de nuevo.
+        // He agregado la encriptacion aqui por seguridad, si no quieres, quita el .encode()
         if (usuarioActualizado.getContrasena() != null && !usuarioActualizado.getContrasena().isEmpty()) {
-            usuario.setContrasena(usuarioActualizado.getContrasena());
+            usuario.setContrasena(passwordEncoder.encode(usuarioActualizado.getContrasena()));
         }
 
         usuario.setRol(usuarioActualizado.getRol());
