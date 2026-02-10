@@ -4,7 +4,7 @@ import com.prototipo.platmod.entity.Curso;
 import com.prototipo.platmod.entity.Usuario;
 import java.util.List;
 
-// Fíjate que dice "interface", no "class"
+// Fijate que dice "interface", no "class"
 public interface CursoService {
 
     List<Curso> obtenerTodos();

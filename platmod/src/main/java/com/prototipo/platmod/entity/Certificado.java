@@ -26,7 +26,7 @@ public class Certificado {
     @JoinColumn(name = "id_leccion", nullable = false)
     private Leccion leccion;
 
-    @NotBlank(message = "El código de verificación es obligatorio")
+    @NotBlank(message = "El codigo de verificacion es obligatorio")
     @Column(name = "codigo_verificacion", nullable = false, unique = true, length = 100)
     private String codigoVerificacion;
 

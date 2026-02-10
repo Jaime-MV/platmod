@@ -18,8 +18,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        // Agrega esto para ver si la petición logra entrar al método
-        System.out.println("✅ PETICIÓN ENTRÓ AL CONTROLADOR: " + request.getCorreo());
+        // Agrega esto para ver si la peticion logra entrar al metodo
+        System.out.println("✅ PETICION ENTRO AL CONTROLADOR: " + request.getCorreo());
 
         return ResponseEntity.ok(authService.login(request));
     }

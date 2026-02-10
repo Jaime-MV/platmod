@@ -21,7 +21,7 @@ import java.util.List;
 public class SecurityConfig {
 
     public SecurityConfig() {
-        System.out.println("⚠️⚠️⚠️ CARGANDO SECURITY CONFIG ⚠️⚠️⚠️");
+        System.out.println("--- CARGANDO SECURITY CONFIG ---");
     }
 
     @Bean
@@ -32,10 +32,10 @@ public class SecurityConfig {
                 // 2. Configurar CORS usando el Bean que definimos abajo
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        // 3. Rutas públicas (Login y Registro)
+                        // 3. Rutas publicas (Login y Registro) - SIN TILDES en comentarios
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-                        // 4. Todo lo demás requiere autenticación
+                        // 4. Todo lo demas requiere verificacion
                         .anyRequest().authenticated()
                 );
         return http.build();
@@ -45,7 +45,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); // Permite cualquier origen (Postman, React, etc.)
+        configuration.setAllowedOrigins(List.of("*")); // Permite cualquier origen
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
 

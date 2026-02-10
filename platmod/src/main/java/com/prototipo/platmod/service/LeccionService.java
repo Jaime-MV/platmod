@@ -21,7 +21,7 @@ public class LeccionService {
 
     public Leccion obtenerPorId(Long id) {
         return leccionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Lección no encontrada con id: " + id));
+                .orElseThrow(() -> new RuntimeException("Leccion no encontrada con id: " + id));
     }
 
     public List<Leccion> obtenerPorCurso(Curso curso) {

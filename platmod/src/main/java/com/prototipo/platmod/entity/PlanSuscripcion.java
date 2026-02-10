@@ -30,8 +30,8 @@ public class PlanSuscripcion {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal precio;
 
-    @NotNull(message = "La duración es obligatoria")
-    @Positive(message = "La duración debe ser positiva")
+    @NotNull(message = "La duracion es obligatoria")
+    @Positive(message = "La duracion debe ser positiva")
     @Column(name = "duracion_dias", nullable = false)
     private Integer duracionDias;
 }

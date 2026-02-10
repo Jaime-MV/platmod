@@ -11,6 +11,6 @@ public class AuthResponse {
     private String nombre;
     private String correo;
     private Usuario.Rol rol;
-    private String token; // Aquí iría el JWT en el futuro, por ahora enviaremos un placeholder o mensaje
+    private String token; // Aqui iria el JWT en el futuro, por ahora enviaremos un placeholder o mensaje
     private String mensaje;
 }

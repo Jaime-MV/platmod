@@ -26,11 +26,11 @@ public class Usuario {
     private String nombre;
 
     @NotBlank(message = "El correo es obligatorio")
-    @Email(message = "El correo debe ser válido")
+    @Email(message = "El correo debe ser valido")
     @Column(nullable = false, unique = true, length = 100)
     private String correo;
 
-    @NotBlank(message = "La contraseña es obligatoria")
+    @NotBlank(message = "La contrasena es obligatoria")
     @Column(nullable = false)
     private String contrasena;
 

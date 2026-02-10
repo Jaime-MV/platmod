@@ -21,7 +21,7 @@ public class Modulo {
     @JoinColumn(name = "id_leccion", nullable = false)
     private Leccion leccion;
 
-    @NotBlank(message = "El título de la sección es obligatorio")
+    @NotBlank(message = "El título de la seccion es obligatorio")
     @Column(name = "titulo_seccion", nullable = false, length = 200)
     private String tituloSeccion;
 
