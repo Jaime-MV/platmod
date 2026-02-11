@@ -23,23 +23,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Desactivar CSRF para APIs
                 .csrf(AbstractHttpConfigurer::disable)
-
-                // 2. Aplicar configuracion de CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
-                // 3. UNICO bloque de autorizacion (Reglas de arriba hacia abajo)
                 .authorizeHttpRequests(auth -> auth
-                        // Rutas de Auth y Registro
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
 
-                        // Rutas de Cursos y Planes publicas (GET)
-                        .requestMatchers(HttpMethod.GET, "/api/cursos/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/planes/**").permitAll()
+                        // ✅ Permitir GET a endpoints de API
+                        .requestMatchers(HttpMethod.GET, "/api/cursos", "/api/cursos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/planes", "/api/planes/**").permitAll()
 
-                        // El resto requiere TOKEN
                         .anyRequest().authenticated()
                 );
 
@@ -49,11 +42,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Cambia "*" por "http://localhost:5173" si quieres mas seguridad
-        configuration.setAllowedOrigins(List.of("*"));
+
+        // ✅ OPCIÓN PERMISIVA (solo para desarrollo/testing)
+        configuration.addAllowedOriginPattern("*"); // Permite cualquier origen
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(false); // Cambiar a true si usas Cookies o Sesiones
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(false); // false cuando usas "*"
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
