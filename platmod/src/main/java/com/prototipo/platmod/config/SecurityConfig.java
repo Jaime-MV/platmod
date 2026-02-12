@@ -32,7 +32,7 @@ public class SecurityConfig {
                         // ✅ Permitir GET a endpoints de API
                         .requestMatchers(HttpMethod.GET, "/api/cursos", "/api/cursos/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/planes", "/api/planes/**").permitAll()
-
+                        .requestMatchers(HttpMethod.GET, "/api/docentes/home").permitAll()
                         .anyRequest().authenticated()
                 );
 
