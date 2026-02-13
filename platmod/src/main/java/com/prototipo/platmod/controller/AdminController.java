@@ -7,6 +7,7 @@ import com.prototipo.platmod.service.PlanSuscripcionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Sort;
 import java.util.List;
 
 @RestController
@@ -17,8 +18,6 @@ public class AdminController {
     @Autowired private CursoRepository cursoRepository;
     @Autowired private PlanSuscripcionService planService;
     @Autowired private UsuarioRepository usuarioRepository;
-
-    // CAMBIO: Inyectamos el Servicio, no el Repositorio
     @Autowired private AsignacionDocenteService asignacionService;
 
     // --- GESTION DE PLANES ---
@@ -32,6 +31,13 @@ public class AdminController {
     }
 
     // --- GESTION DE CURSOS ---
+
+    // 1. CORRECCIÓN DEL ORDEN: Agregamos Sort.by
+    @GetMapping("/cursos")
+    public List<Curso> listarCursosAdmin() {
+        return cursoRepository.findAll(Sort.by(Sort.Direction.ASC, "idCurso"));
+    }
+
     @PostMapping("/cursos")
     public Curso crearCurso(@RequestBody Curso curso) {
         return cursoRepository.save(curso);
@@ -40,13 +46,17 @@ public class AdminController {
     @PutMapping("/cursos/{id}")
     public ResponseEntity<Curso> editarCurso(@PathVariable Long id, @RequestBody Curso cursoDetalles) {
         return cursoRepository.findById(id).map(curso -> {
-            curso.setTitulo(cursoDetalles.getTitulo());
-            curso.setDescripcion(cursoDetalles.getDescripcion());
-            curso.setPortadaUrl(cursoDetalles.getPortadaUrl());
-            // Validamos que venga el estado para no poner nulos
+            // Solo actualizamos si el dato viene en el JSON (evita nulos accidentales)
+            if (cursoDetalles.getTitulo() != null) curso.setTitulo(cursoDetalles.getTitulo());
+            if (cursoDetalles.getDescripcion() != null) curso.setDescripcion(cursoDetalles.getDescripcion());
+            if (cursoDetalles.getPortadaUrl() != null) curso.setPortadaUrl(cursoDetalles.getPortadaUrl());
+
+            // Log para depurar en consola de Render/Local
             if (cursoDetalles.getEstado() != null) {
+                System.out.println("Actualizando estado curso ID " + id + " a: " + cursoDetalles.getEstado());
                 curso.setEstado(cursoDetalles.getEstado());
             }
+
             return ResponseEntity.ok(cursoRepository.save(curso));
         }).orElse(ResponseEntity.notFound().build());
     }
