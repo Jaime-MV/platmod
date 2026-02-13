@@ -7,7 +7,7 @@ import com.prototipo.platmod.service.PlanSuscripcionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -69,5 +69,11 @@ public class AdminController {
         AsignacionDocente guardado = asignacionService.crear(nuevaAsignacion);
 
         return ResponseEntity.ok(guardado);
+    }
+
+    @GetMapping("/docentes-list")
+    public List<Usuario> listarDocentes() {
+        // Usamos el enum que está dentro de tu clase Usuario
+        return usuarioRepository.findByRol(Usuario.Rol.DOCENTE);
     }
 }
