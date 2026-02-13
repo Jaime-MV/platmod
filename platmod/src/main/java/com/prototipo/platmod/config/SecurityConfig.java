@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
+import org.springframework.http.HttpMethod;
 import java.util.Arrays;
 
 @Configuration
@@ -23,29 +23,27 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Se mantiene tu config de CORS
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Accesos Públicos de Autenticación
+                        // 1. 🔥 REGLA DE ORO PARA REACT: Permitir preflight (OPTIONS)
+                        // Si no pones esto, el navegador se bloquea antes de enviar el login
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // 2. Login y Registro Públicos
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
 
-                        // 2. Accesos Públicos de Lectura (Para el Home Page)
-                        .requestMatchers(HttpMethod.GET, "/api/cursos", "/api/cursos/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/planes", "/api/planes/**").permitAll()
+                        // 3. Lecturas Públicas
+                        .requestMatchers(HttpMethod.GET, "/api/cursos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/planes/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/docentes/home").permitAll()
 
-                        // 3. ✅ ZONA PROTEGIDA DE ADMINISTRADOR (NUEVO)
-                        // Bloquea cualquier petición que empiece con /api/admin/
-                        // si el usuario no tiene el rol ADMINISTRADOR.
+                        // 4. Admin
                         .requestMatchers("/api/admin/**").hasAuthority("ADMINISTRADOR")
 
-                        // 4. Resto de peticiones (Perfil, clases, etc.) requieren estar logueado
+                        // 5. El resto bloqueado
                         .anyRequest().authenticated()
                 );
-
-        // NOTA IMPORTANTE: Si estás usando JWT, recuerda que aquí usualmente se agrega:
-        // .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        // Si ya lo tienes configurado en otro lado o lo omitiste al copiar, está bien.
 
         return http.build();
     }
