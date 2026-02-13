@@ -27,6 +27,9 @@ public class Curso {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
+    @Column(nullable = false)
+    private Boolean estado = true;
+
     @Column(name = "portada_url", length = 255)
     private String portadaUrl;
 }

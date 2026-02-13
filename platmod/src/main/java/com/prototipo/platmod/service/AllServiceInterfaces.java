@@ -33,19 +33,6 @@ interface DocenteService {
 }
 
 // ============================================
-// ASIGNACION DOCENTE SERVICE
-// ============================================
-interface AsignacionDocenteService {
-    List<AsignacionDocente> obtenerTodas();
-    AsignacionDocente obtenerPorId(Long id);
-    List<AsignacionDocente> obtenerPorCurso(Curso curso);
-    List<AsignacionDocente> obtenerPorUsuario(Usuario usuario);
-    List<AsignacionDocente> obtenerPorCursoId(Long idCurso);
-    AsignacionDocente crear(AsignacionDocente asignacion);
-    void eliminar(Long id);
-}
-
-// ============================================
 // MODULO SERVICE
 // ============================================
 interface ModuloService {

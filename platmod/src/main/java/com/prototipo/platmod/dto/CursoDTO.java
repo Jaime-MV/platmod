@@ -5,5 +5,4 @@ public record CursoDTO(
         String titulo,
         String descripcion,
         String portadaUrl
-
 ) {}
