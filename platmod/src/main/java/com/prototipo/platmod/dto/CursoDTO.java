@@ -5,5 +5,6 @@ public record CursoDTO(
         String titulo,
         String descripcion,
         String portadaUrl,
-        Boolean estado
+        Boolean estado,
+        Long numDocentes
 ) {}

@@ -1,14 +1,17 @@
 package com.prototipo.platmod.controller;
 
+import com.prototipo.platmod.dto.CursoDTO;
 import com.prototipo.platmod.entity.*;
 import com.prototipo.platmod.repository.*;
-import com.prototipo.platmod.service.AsignacionDocenteService; // <--- Importamos el servicio
+import com.prototipo.platmod.service.AsignacionDocenteService;
 import com.prototipo.platmod.service.PlanSuscripcionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Sort;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -19,6 +22,7 @@ public class AdminController {
     @Autowired private PlanSuscripcionService planService;
     @Autowired private UsuarioRepository usuarioRepository;
     @Autowired private AsignacionDocenteService asignacionService;
+    @Autowired private AsignacionDocenteRepository asignacionRepository;
 
     // --- GESTION DE PLANES ---
     @PutMapping("/planes/{id}")
@@ -32,10 +36,24 @@ public class AdminController {
 
     // --- GESTION DE CURSOS ---
 
-    // 1. CORRECCIÓN DEL ORDEN: Agregamos Sort.by
+    // 1. LISTAR CURSOS CON CONTEO DE DOCENTES (Actualizado)
     @GetMapping("/cursos")
-    public List<Curso> listarCursosAdmin() {
-        return cursoRepository.findAll(Sort.by(Sort.Direction.ASC, "idCurso"));
+    public List<CursoDTO> listarCursosAdmin() {
+        List<Curso> cursos = cursoRepository.findAll(Sort.by(Sort.Direction.ASC, "idCurso"));
+
+        return cursos.stream().map(curso -> {
+            // Contamos cuántos docentes tiene este curso
+            long totalDocentes = asignacionRepository.countByCurso_IdCurso(curso.getIdCurso());
+
+            return new CursoDTO(
+                    curso.getIdCurso(),
+                    curso.getTitulo(),
+                    curso.getDescripcion(),
+                    curso.getPortadaUrl(),
+                    curso.getEstado(),
+                    totalDocentes // Pasamos el conteo al DTO
+            );
+        }).collect(Collectors.toList());
     }
 
     @PostMapping("/cursos")
@@ -59,6 +77,22 @@ public class AdminController {
 
             return ResponseEntity.ok(cursoRepository.save(curso));
         }).orElse(ResponseEntity.notFound().build());
+    }
+
+    // 2. NUEVO ENDPOINT: ELIMINAR CURSO
+    @DeleteMapping("/cursos/{id}")
+    public ResponseEntity<?> eliminarCurso(@PathVariable Long id) {
+        if (!cursoRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Primero borramos las relaciones en la tabla intermedia (limpieza)
+        asignacionRepository.deleteByCurso_IdCurso(id);
+
+        // Ahora sí borramos el curso
+        cursoRepository.deleteById(id);
+
+        return ResponseEntity.ok().build();
     }
 
     // --- ASIGNACIÓN DE DOCENTES ---
