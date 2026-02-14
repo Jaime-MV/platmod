@@ -18,15 +18,21 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*")
 public class AdminController {
 
-    @Autowired private CursoRepository cursoRepository;
-    @Autowired private PlanSuscripcionService planService;
-    @Autowired private UsuarioRepository usuarioRepository;
-    @Autowired private AsignacionDocenteService asignacionService;
-    @Autowired private AsignacionDocenteRepository asignacionRepository;
+    @Autowired
+    private CursoRepository cursoRepository;
+    @Autowired
+    private PlanSuscripcionService planService;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private AsignacionDocenteService asignacionService;
+    @Autowired
+    private AsignacionDocenteRepository asignacionRepository;
 
     // --- GESTION DE PLANES ---
     @PutMapping("/planes/{id}")
-    public ResponseEntity<PlanSuscripcion> actualizarPlan(@PathVariable Long id, @RequestBody PlanSuscripcion planDetalles) {
+    public ResponseEntity<PlanSuscripcion> actualizarPlan(@PathVariable Long id,
+            @RequestBody PlanSuscripcion planDetalles) {
         try {
             return ResponseEntity.ok(planService.actualizar(id, planDetalles));
         } catch (RuntimeException e) {
@@ -58,6 +64,17 @@ public class AdminController {
 
     @PostMapping("/cursos")
     public Curso crearCurso(@RequestBody Curso curso) {
+        // 1. Obtener el usuario autenticado del contexto de seguridad
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication()
+                .getName();
+
+        // 2. Buscar el usuario en la BD
+        Usuario admin = usuarioRepository.findByCorreo(email)
+                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
+
+        // 3. Asignar el admin al curso
+        curso.setAdministrador(admin);
+
         return cursoRepository.save(curso);
     }
 
@@ -65,9 +82,12 @@ public class AdminController {
     public ResponseEntity<Curso> editarCurso(@PathVariable Long id, @RequestBody Curso cursoDetalles) {
         return cursoRepository.findById(id).map(curso -> {
             // Solo actualizamos si el dato viene en el JSON (evita nulos accidentales)
-            if (cursoDetalles.getTitulo() != null) curso.setTitulo(cursoDetalles.getTitulo());
-            if (cursoDetalles.getDescripcion() != null) curso.setDescripcion(cursoDetalles.getDescripcion());
-            if (cursoDetalles.getPortadaUrl() != null) curso.setPortadaUrl(cursoDetalles.getPortadaUrl());
+            if (cursoDetalles.getTitulo() != null)
+                curso.setTitulo(cursoDetalles.getTitulo());
+            if (cursoDetalles.getDescripcion() != null)
+                curso.setDescripcion(cursoDetalles.getDescripcion());
+            if (cursoDetalles.getPortadaUrl() != null)
+                curso.setPortadaUrl(cursoDetalles.getPortadaUrl());
 
             // Log para depurar en consola de Render/Local
             if (cursoDetalles.getEstado() != null) {
