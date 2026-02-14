@@ -57,11 +57,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            // Token invalido o expirado, no hacemos nada y dejamos que Security rechace si
-            // es necesario
+            // Error JWT o Usuario no encontrado: lanzamos excepción para que el EntryPoint
+            // la capture
             System.out.println("Error JWT: " + e.getMessage());
+            // Importante: No podemos lanzar excepciones chequeadas aquí directamente sin
+            // envolverlas,
+            // pero si limpiamos el contexto, Security lanzará AuthenticationException
+            // después.
+            // Para forzar el mensaje, podemos setear el atributo en el request:
+            request.setAttribute("auth_error", e.getMessage());
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
     }
+
 }

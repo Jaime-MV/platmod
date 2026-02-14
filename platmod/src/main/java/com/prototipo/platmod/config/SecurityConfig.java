@@ -14,6 +14,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,28 +41,39 @@ public class SecurityConfig {
                         // 2. Rutas Públicas
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/cursos/**", "/api/planes/**", "/api/docentes/home").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/cursos/**", "/api/planes/**", "/api/docentes/home")
+                        .permitAll()
 
                         // 3. Admin
                         .requestMatchers("/api/admin/**").hasAuthority("ADMINISTRADOR")
 
                         // 4. Resto autenticado
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider) // <--- CONECTAMOS EL PROVIDER AQUÍ
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
                 // Manejo de errores en consola
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((request, response, authException) -> {
-                            System.out.println("⛔ ERROR AUTH: " + authException.getMessage());
-                            response.sendError(401, authException.getMessage());
+                            String errorMsg = (String) request.getAttribute("auth_error");
+                            if (errorMsg == null)
+                                errorMsg = authException.getMessage();
+
+                            System.out.println("⛔ ERROR AUTH: " + errorMsg);
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.setHeader("X-Auth-Error", errorMsg);
+                            response.getWriter().write("{\"error\": \"" + errorMsg + "\"}");
+                            response.getWriter().flush();
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             System.out.println("⛔ ACCESO DENEGADO: " + accessDeniedException.getMessage());
-                            response.sendError(403, accessDeniedException.getMessage());
-                        })
-                );
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    "{\"error\": \"Acceso denegado: " + accessDeniedException.getMessage() + "\"}");
+                            response.getWriter().flush();
+                        }));
 
         return http.build();
     }
