@@ -173,4 +173,27 @@ public class AdminController {
         // Usamos el enum que está dentro de tu clase Usuario
         return usuarioRepository.findByRol(Usuario.Rol.DOCENTE);
     }
+
+    // 5. NUEVO: Actualización masiva de docentes asignados (Drag & Drop)
+    @PutMapping("/cursos/{idCurso}/asignaciones")
+    public ResponseEntity<?> updateDocentesPorCurso(@PathVariable Long idCurso, @RequestBody List<Long> docentesIds) {
+        // 1. Validar curso
+        Curso curso = cursoRepository.findById(idCurso)
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+
+        // 2. Borrar asignaciones existentes
+        asignacionRepository.deleteByCurso_IdCurso(idCurso);
+
+        // 3. Crear nuevas asignaciones
+        List<Usuario> docentes = usuarioRepository.findAllById(docentesIds);
+
+        for (Usuario docente : docentes) {
+            AsignacionDocente asignacion = new AsignacionDocente();
+            asignacion.setCurso(curso);
+            asignacion.setUsuario(docente);
+            asignacionRepository.save(asignacion);
+        }
+
+        return ResponseEntity.ok().build();
+    }
 }
