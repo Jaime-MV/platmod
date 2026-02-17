@@ -19,4 +19,8 @@ public interface PlanSuscripcionService {
     PlanSuscripcion actualizar(Long id, PlanSuscripcion plan);
 
     void eliminar(Long id);
+
+    com.prototipo.platmod.entity.PlanBeneficio agregarBeneficio(Long idPlan, String descripcion);
+
+    void eliminarBeneficio(Long idBeneficio);
 }

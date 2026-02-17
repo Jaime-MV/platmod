@@ -34,4 +34,13 @@ public class PlanSuscripcion {
     @Positive(message = "La duracion debe ser positiva")
     @Column(name = "duracion_dias", nullable = false)
     private Integer duracionDias;
+
+    @Column(precision = 5, scale = 2)
+    private BigDecimal descuento;
+
+    @Column(name = "oferta_activa")
+    private Boolean ofertaActiva;
+
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private java.util.List<PlanBeneficio> beneficios;
 }

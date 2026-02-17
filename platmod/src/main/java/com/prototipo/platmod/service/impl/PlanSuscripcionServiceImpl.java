@@ -14,6 +14,7 @@ import java.util.List;
 public class PlanSuscripcionServiceImpl implements PlanSuscripcionService {
 
     private final PlanSuscripcionRepository planRepository;
+    private final com.prototipo.platmod.repository.PlanBeneficioRepository beneficioRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -47,6 +48,8 @@ public class PlanSuscripcionServiceImpl implements PlanSuscripcionService {
         plan.setNombre(planActualizado.getNombre());
         plan.setPrecio(planActualizado.getPrecio());
         plan.setDuracionDias(planActualizado.getDuracionDias());
+        plan.setDescuento(planActualizado.getDescuento());
+        plan.setOfertaActiva(planActualizado.getOfertaActiva());
         return planRepository.save(plan);
     }
 
@@ -54,5 +57,21 @@ public class PlanSuscripcionServiceImpl implements PlanSuscripcionService {
     @Transactional
     public void eliminar(Long id) {
         planRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public com.prototipo.platmod.entity.PlanBeneficio agregarBeneficio(Long idPlan, String descripcion) {
+        PlanSuscripcion plan = obtenerPorId(idPlan);
+        com.prototipo.platmod.entity.PlanBeneficio beneficio = new com.prototipo.platmod.entity.PlanBeneficio();
+        beneficio.setDescripcion(descripcion);
+        beneficio.setPlan(plan);
+        return beneficioRepository.save(beneficio);
+    }
+
+    @Override
+    @Transactional
+    public void eliminarBeneficio(Long idBeneficio) {
+        beneficioRepository.deleteById(idBeneficio);
     }
 }

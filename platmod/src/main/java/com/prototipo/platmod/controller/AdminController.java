@@ -43,6 +43,23 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/planes/{idPlan}/beneficios")
+    public ResponseEntity<PlanSuscripcion> agregarBeneficio(@PathVariable Long idPlan,
+            @RequestBody java.util.Map<String, String> payload) {
+        String descripcion = payload.get("descripcion");
+        if (descripcion == null || descripcion.trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        planService.agregarBeneficio(idPlan, descripcion);
+        return ResponseEntity.ok(planService.obtenerPorId(idPlan));
+    }
+
+    @DeleteMapping("/planes/beneficios/{idBeneficio}")
+    public ResponseEntity<?> eliminarBeneficio(@PathVariable Long idBeneficio) {
+        planService.eliminarBeneficio(idBeneficio);
+        return ResponseEntity.ok().build();
+    }
+
     // --- GESTION DE CURSOS ---
 
     // 1. LISTAR CURSOS CON CONTEO DE DOCENTES (Actualizado)
