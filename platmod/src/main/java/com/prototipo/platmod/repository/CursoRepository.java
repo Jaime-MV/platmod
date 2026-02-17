@@ -13,4 +13,5 @@ public interface CursoRepository extends JpaRepository<Curso, Long> {
     List<Curso> findByAdministrador(Usuario administrador);
 
     List<Curso> findByTituloContainingIgnoreCase(String titulo);
+    List<Curso> findByEstadoTrue();
 }

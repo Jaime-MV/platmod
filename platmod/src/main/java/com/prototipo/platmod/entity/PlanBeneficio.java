@@ -1,5 +1,6 @@
 package com.prototipo.platmod.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,6 @@ public class PlanBeneficio {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_plan", nullable = false)
-    @JsonBackReference
+    @JsonIgnore
     private PlanSuscripcion plan;
 }

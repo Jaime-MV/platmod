@@ -51,10 +51,19 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario crear(Usuario usuario) {
         if (usuarioRepository.existsByCorreo(usuario.getCorreo())) {
-            throw new RuntimeException("El correo ya está registrado: " + usuario.getCorreo());
+            throw new RuntimeException("El correo ya esta registrado: " + usuario.getCorreo());
         }
-        // ENCRIPTAR LA CONTRASEÑA ANTES DE GUARDAR
+
+        // 1. ENCRIPTAR LA CONTRASENA
         usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+
+        // 2. 🔒 SEGURIDAD: FORZAR SIEMPRE EL ROL DE ESTUDIANTE
+        // Esto ignora cualquier dato de "rol" que venga en el JSON
+        usuario.setRol(Usuario.Rol.ESTUDIANTE);
+
+        // 3. ASEGURAR QUE EL USUARIO NAZCA ACTIVO (O false si requieres verificación por correo)
+        usuario.setEstado(true);
+
         return usuarioRepository.save(usuario);
     }
 

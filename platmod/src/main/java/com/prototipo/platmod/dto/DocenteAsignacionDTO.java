@@ -5,11 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class DocenteAsignacionDTO {
     private Long idUsuario;
     private String nombre;
     private String especialidad;
-    private Boolean asignado;
+    private String fotoUrl;
+    private boolean asignado; // true si ya dicta este curso
 }

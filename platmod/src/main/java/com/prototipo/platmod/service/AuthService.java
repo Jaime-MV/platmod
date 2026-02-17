@@ -14,6 +14,7 @@ public class AuthService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService; // 1. INYECTAMOS EL SERVICIO DE TOKEN
 
     public AuthResponse login(LoginRequest request) {
         // 1. Buscar usuario por correo
@@ -30,13 +31,16 @@ public class AuthService {
             throw new RuntimeException("El usuario esta inactivo");
         }
 
-        // 4. Generar respuesta (Aqui generarias el JWT si usaras tokens)
+        // 4. Generar el Token REAL usando JwtService
+        String jwtToken = jwtService.generateToken(usuario); // 2. GENERAMOS EL TOKEN REAL
+
+        // 5. Devolver la respuesta con el token real
         return AuthResponse.builder()
                 .idUsuario(usuario.getIdUsuario())
                 .nombre(usuario.getNombre())
                 .correo(usuario.getCorreo())
-                .rol(usuario.getRol())
-                .token("TOKEN_DE_PRUEBA_SIMULADO_XYZ") // En el futuro aqui va el JWT real
+                .rol(usuario.getRol()) // Asegurate que tu DTO acepte el Enum, si no usa .toString()
+                .token(jwtToken) //3. REEMPLAZAMOS EL TEXTO DE PRUEBA POR EL TOKEN REAL
                 .mensaje("Login exitoso")
                 .build();
     }

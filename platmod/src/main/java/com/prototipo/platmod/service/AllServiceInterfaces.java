@@ -15,33 +15,6 @@ interface PerfilDetalleService {
     void actualizarUltimoLogin(Long idUsuario);
 }
 
-// ============================================
-// PLAN SUSCRIPCION SERVICE
-// ============================================
-interface PlanSuscripcionService {
-    List<PlanSuscripcion> obtenerTodos();
-    PlanSuscripcion obtenerPorId(Long id);
-    List<PlanSuscripcion> obtenerOrdenadosPorPrecio();
-    PlanSuscripcion crear(PlanSuscripcion plan);
-    PlanSuscripcion actualizar(Long id, PlanSuscripcion plan);
-    void eliminar(Long id);
-}
-
-
-// ============================================
-// SUSCRIPCION SERVICE
-// ============================================
-interface SuscripcionService {
-    List<Suscripcion> obtenerTodas();
-    Suscripcion obtenerPorId(Long id);
-    List<Suscripcion> obtenerPorEstudiante(Estudiante estudiante);
-    List<Suscripcion> obtenerPorEstado(Boolean estado);
-    List<Suscripcion> obtenerActivas();
-    Suscripcion crear(Suscripcion suscripcion);
-    Suscripcion actualizar(Long id, Suscripcion suscripcion);
-    void eliminar(Long id);
-    void cancelarSuscripcion(Long id);
-}
 
 // ============================================
 // DOCENTE SERVICE
@@ -57,19 +30,6 @@ interface DocenteService {
     Docente actualizar(Long id, Docente docente);
     void eliminar(Long id);
     void cambiarEstado(Long id, Boolean estado);
-}
-
-// ============================================
-// ASIGNACION DOCENTE SERVICE
-// ============================================
-interface AsignacionDocenteService {
-    List<AsignacionDocente> obtenerTodas();
-    AsignacionDocente obtenerPorId(Long id);
-    List<AsignacionDocente> obtenerPorCurso(Curso curso);
-    List<AsignacionDocente> obtenerPorUsuario(Usuario usuario);
-    List<AsignacionDocente> obtenerPorCursoId(Long idCurso);
-    AsignacionDocente crear(AsignacionDocente asignacion);
-    void eliminar(Long id);
 }
 
 // ============================================

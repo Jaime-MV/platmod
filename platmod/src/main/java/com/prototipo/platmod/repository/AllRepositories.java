@@ -13,9 +13,12 @@ interface PerfilDetalleRepository extends JpaRepository<PerfilDetalle, Long> {
     Optional<PerfilDetalle> findByUsuario(Usuario usuario);
 }
 
-// PlanSuscripcionRepository moved to separate file
-// DocenteRepository moved to separate file
-// AsignacionDocenteRepository moved to separate file
+// Suscripcion Repository
+@Repository
+interface SuscripcionRepository extends JpaRepository<Suscripcion, Long> {
+    List<Suscripcion> findByEstudiante(Estudiante estudiante);
+    List<Suscripcion> findByEstado(Boolean estado);
+}
 
 // Modulo Repository
 @Repository
