@@ -43,4 +43,8 @@ public class PlanSuscripcion {
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private java.util.List<PlanBeneficio> beneficios;
+    private BigDecimal descuento = BigDecimal.ZERO;
+
+    @Column(name = "oferta_activa")
+    private Boolean ofertaActiva = false;
 }

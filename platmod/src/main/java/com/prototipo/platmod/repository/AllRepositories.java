@@ -1,4 +1,5 @@
 package com.prototipo.platmod.repository;
+
 import com.prototipo.platmod.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -29,6 +30,7 @@ interface ModuloRepository extends JpaRepository<Modulo, Long> {
 @Repository
 interface ProgresoEstudianteRepository extends JpaRepository<ProgresoEstudiante, Long> {
     List<ProgresoEstudiante> findByEstudiante(Estudiante estudiante);
+
     List<ProgresoEstudiante> findByEstudianteAndCompletado(Estudiante estudiante, Boolean completado);
 }
 
@@ -36,6 +38,7 @@ interface ProgresoEstudianteRepository extends JpaRepository<ProgresoEstudiante,
 @Repository
 interface CertificadoRepository extends JpaRepository<Certificado, Long> {
     List<Certificado> findByEstudiante(Estudiante estudiante);
+
     Optional<Certificado> findByCodigoVerificacion(String codigoVerificacion);
 }
 
@@ -43,6 +46,7 @@ interface CertificadoRepository extends JpaRepository<Certificado, Long> {
 @Repository
 interface ComentarioRepository extends JpaRepository<Comentario, Long> {
     List<Comentario> findByLeccion(Leccion leccion);
+
     List<Comentario> findByUsuario(Usuario usuario);
 }
 
@@ -62,6 +66,7 @@ interface MensajePrivadoRepository extends JpaRepository<MensajePrivado, Long> {
 @Repository
 interface ForoPreguntaRepository extends JpaRepository<ForoPregunta, Long> {
     List<ForoPregunta> findByCategoria(String categoria);
+
     List<ForoPregunta> findByUsuario(Usuario usuario);
 }
 
@@ -69,5 +74,6 @@ interface ForoPreguntaRepository extends JpaRepository<ForoPregunta, Long> {
 @Repository
 interface ForoRespuestaRepository extends JpaRepository<ForoRespuesta, Long> {
     List<ForoRespuesta> findByPregunta(ForoPregunta pregunta);
+
     List<ForoRespuesta> findByPreguntaAndEsVerificada(ForoPregunta pregunta, Boolean esVerificada);
 }

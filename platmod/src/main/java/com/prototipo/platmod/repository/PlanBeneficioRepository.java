@@ -6,4 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PlanBeneficioRepository extends JpaRepository<PlanBeneficio, Long> {
+import java.util.List;
+
+@Repository
+public interface PlanBeneficioRepository extends JpaRepository<PlanBeneficio, Long> {
+    List<PlanBeneficio> findByPlan_IdPlan(Long idPlan);
 }

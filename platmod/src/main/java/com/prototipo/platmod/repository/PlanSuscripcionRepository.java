@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-// PlanSuscripcion Repository
 @Repository
 public interface PlanSuscripcionRepository extends JpaRepository<PlanSuscripcion, Long> {
     List<PlanSuscripcion> findByOrderByPrecioAsc();

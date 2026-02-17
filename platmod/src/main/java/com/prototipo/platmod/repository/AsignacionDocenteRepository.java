@@ -22,6 +22,10 @@ public interface AsignacionDocenteRepository extends JpaRepository<AsignacionDoc
     long countByCurso_IdCurso(Long idCurso);
 
     // 2. NUEVO: Borrar todas las asignaciones de un curso (antes de borrar el curso)
+    List<AsignacionDocente> findByCurso_IdCurso(Long idCurso);
+
+    List<AsignacionDocente> findByUsuario(Usuario usuario);
+
     @Transactional
     void deleteByCurso_IdCurso(Long idCurso);
 }
